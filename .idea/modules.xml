@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eventsourcedgame.iml" filepath="$PROJECT_DIR$/.idea/modules/eventsourcedgame.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eventsourcedgame-build.iml" filepath="$PROJECT_DIR$/.idea/modules/eventsourcedgame-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/game.iml" filepath="$PROJECT_DIR$/.idea/modules/game.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/game-build.iml" filepath="$PROJECT_DIR$/.idea/modules/game-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/reactive-rabbit.iml" filepath="$PROJECT_DIR$/.idea/modules/reactive-rabbit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/reactive-rabbit-build.iml" filepath="$PROJECT_DIR$/.idea/modules/reactive-rabbit-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/statistics.iml" filepath="$PROJECT_DIR$/.idea/modules/statistics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/statistics-build.iml" filepath="$PROJECT_DIR$/.idea/modules/statistics-build.iml" />
+    </modules>
+  </component>
+</project>
