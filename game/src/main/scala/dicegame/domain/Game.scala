@@ -8,7 +8,16 @@ import scala.util.Random
  * Created by nigelnindo on 11/4/15.
  */
 
+/*
+  ->The object Game makes sure that a Game is created in an uninitialized state.
+  ->
+ */
+
 object Game {
+  /*
+    ->create method could be return an instance of Game or UninitializedGame. Find
+      out which on is actually returned.
+   */
   def create(id:GameId) = UninitializedGame(id)
 }
 
@@ -20,6 +29,11 @@ sealed trait Game extends AggregateRoot[Game,GameEvent]{
 
   implicit def violationToLeft(violation: GameRulesViolation) = Left(violation)
 
+  /*
+    ->handleCommand checks the current state of Game (using the this reference)
+      and responds accordingly as shown below.
+   */
+
   def handleCommand(command:GameCommand): Either[GameRulesViolation,Game] = command match {
     case StartGame(players) => this match {
       case ug: UninitializedGame => ug.start(players)
@@ -30,6 +44,11 @@ sealed trait Game extends AggregateRoot[Game,GameEvent]{
       case _ => GameNotRunningViolation
     }
   }
+
+  /*
+    ->Methods isFinished and isRunning also check the current state of the Game sealed trait
+      and return a boolean value.
+   */
 
   def isFinished = this match {
     case fg: FinishedGame => true
@@ -43,8 +62,19 @@ sealed trait Game extends AggregateRoot[Game,GameEvent]{
 
 }
 
+/*
+  ->case class UninitializedGame overrides 'id' and 'uncommittedEvents'
+    from the AggregateRoot trait
+ */
+
 case class UninitializedGame(override val id: GameId,
                                override val uncommittedEvents: List[GameEvent] = Nil) extends Game{
+
+  /*
+    ->To start a game, pass in a sequence of PlayerId's
+    ->You need at least two players to start the Game
+    ->On successful start of a game, send out the GameStarted event
+   */
 
   def start(players: Seq[PlayerId]): Either[GameRulesViolation,Game] = {
     if (players.size < 2) {
@@ -55,6 +85,16 @@ case class UninitializedGame(override val id: GameId,
       applyEvents(GameStarted(id,players,Turn(firstPlayer,turnTimeOutSeconds)))
     }
   }
+
+  /*
+    ->The applyEvent PartialFunction will respond to a GameStarted event
+    ->Remember that applyEvent has to return an instance of type T. type T
+      in this example is an instance of Game
+    ->Returning RunningGame still works because RunningGame extends the InitializedGame
+      trait which extends the Game class.
+    ->Any subclass (or if you like, children) of class Game can be returned without
+      the compiler complaining.
+   */
 
   override def applyEvent = {
     case ev @ GameStarted(_, players, initialTurn) =>
@@ -70,6 +110,12 @@ sealed trait InitializedGame extends Game {
 }
 
 case class Turn(currentPlayer: PlayerId, secondsLeft: Int)
+
+/*
+  ->case class RunningGame overrides 'players' from the Initialized
+   trait it extends from.
+
+ */
 
 case class RunningGame(override val id: GameId, override val players: Seq[PlayerId],
                        turn: Turn, rolledNumbers: Map[PlayerId,Int] = Map.empty,
@@ -101,7 +147,17 @@ case class RunningGame(override val id: GameId, override val players: Seq[Player
 
   def bestPlayers: Set[PlayerId] = {
     val highest = highestRolledNumber
-    rolledNumbers.collect { case (player, `highest`) => player }.toSet
+    /*
+      ->Collect runs a PartialFunction on the rolledNumbers Map.
+      ->Only items which meet the predicate function are collected.
+      ->In this case the predicate matches the highest number in the Map.
+      ->At the end the collected items are converted into a set.
+      ->The transformation '=>' shows that only the players who match
+        the predicate are added to the set
+     */
+    rolledNumbers.collect {
+      case (player, `highest`) => player
+    }.toSet
   }
 
   def highestRolledNumber: Int = {
@@ -109,7 +165,8 @@ case class RunningGame(override val id: GameId, override val players: Seq[Player
       0
     }
     else{
-      rolledNumbers.map(_._2).max
+      //rolledNumbers.map(_._2).max
+      rolledNumbers.values.max //same as rolledNumbers.map(_._2).max
     }
   }
 
